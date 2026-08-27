@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cuaderno de Métodos Numéricos</title>
+<title>Desafio Integrador</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -297,71 +297,6 @@
   }
 
   ::selection{ background:var(--gold); color:var(--bg); }
-
-  /* ---------- Authors ---------- */
-  .authors{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:12px;
-    color:rgba(244,239,225,0.55);
-    margin-top:18px;
-    letter-spacing:0.02em;
-  }
-  .authors .a-label{
-    text-transform:uppercase;
-    letter-spacing:0.2em;
-    color:var(--gold);
-    font-size:10px;
-    display:block;
-    margin-bottom:6px;
-  }
-  .authors ul{list-style:none; margin:0; padding:0;}
-  .authors li{margin:2px 0;}
-
-  /* ---------- Theory / formula blocks ---------- */
-  .theory{
-    grid-column:1 / -1;
-    background:rgba(31,122,108,0.06);
-    border:1px dashed var(--paper-line);
-    border-radius:4px;
-    padding:18px 22px;
-    margin-bottom:6px;
-  }
-  .theory h3{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    letter-spacing:0.16em;
-    text-transform:uppercase;
-    color:var(--rust);
-    margin:0 0 12px;
-  }
-  .theory p{
-    font-size:0.9rem;
-    line-height:1.65;
-    color:#3a352b;
-    margin:0 0 12px;
-  }
-  .theory p:last-child{margin-bottom:0;}
-  .formula-box{
-    font-family:'IBM Plex Mono', monospace;
-    background:#fffef9;
-    border-left:3px solid var(--copper);
-    padding:10px 14px;
-    margin:10px 0;
-    font-size:0.92rem;
-    color:var(--copper-dark);
-    overflow-x:auto;
-    white-space:nowrap;
-  }
-  .formula-box .fx-label{
-    display:block;
-    font-size:0.68rem;
-    letter-spacing:0.08em;
-    text-transform:uppercase;
-    color:#8a8168;
-    margin-bottom:4px;
-    font-family:'IBM Plex Sans', sans-serif;
-    white-space:normal;
-  }
 </style>
 </head>
 <body>
@@ -370,13 +305,6 @@
   <div class="eyebrow">Desafío Integrador — Métodos Numéricos</div>
   <h1 class="title">Cuaderno de Cálculo</h1>
   <p class="subtitle">Tres ejercicios, tres mediciones, un mismo cuidado por el error. Cambiá los valores y mirá cómo se propaga cada cifra.</p>
-  <div class="authors">
-    <span class="a-label">Autoras</span>
-    <ul>
-      <li>Serrano Mamani Raquel Araceli</li>
-      <li>Flores Ninachoque Jhoselyn Daniela</li>
-    </ul>
-  </div>
 </header>
 
 <nav class="tabs">
@@ -393,17 +321,6 @@
     <p class="desc">Un lado de un cuadrado se mide con instrumento; lo comparamos contra el valor de referencia y propagamos el error hacia el área, A = x².</p>
 
     <div class="grid">
-      <div class="theory">
-        <h3>Cómo se calcula</h3>
-        <p>Toda medición tiene un error respecto al valor real o de referencia. Ese error no se queda quieto: si la medición entra en una fórmula (acá, el área de un cuadrado), el error se "propaga" y afecta al resultado final. La propagación se estima con la derivada de la función respecto a la variable medida — mientras más sensible es la fórmula a un cambio en x, más se amplifica el error.</p>
-        <div class="formula-box"><span class="fx-label">Error absoluto</span>E_a = | x_v − x_a |</div>
-        <div class="formula-box"><span class="fx-label">Error relativo</span>E_r = E_a / x_v</div>
-        <div class="formula-box"><span class="fx-label">Función a evaluar</span>A(x) = x²</div>
-        <div class="formula-box"><span class="fx-label">Derivada de la función</span>A'(x) = dA/dx = 2x</div>
-        <div class="formula-box"><span class="fx-label">Error propagado (regla de propagación de errores)</span>ΔA = | A'(x_v) | · E_a</div>
-        <div class="formula-box"><span class="fx-label">Error relativo del área</span>E_r(A) = ΔA / A_real</div>
-      </div>
-
       <div>
         <p class="panel-title">Mediciones</p>
         <div class="field">
@@ -462,16 +379,6 @@
     <p class="desc">Aproximamos e˟ con polinomios de Taylor de grado 1 y 2 alrededor de 0, y acotamos el error con el residuo de Lagrange.</p>
 
     <div class="grid">
-      <div class="theory">
-        <h3>Cómo se calcula</h3>
-        <p>El polinomio de Taylor aproxima una función complicada (como e˟) usando solo sus derivadas en un punto — acá, alrededor de x = 0 (serie de Maclaurin). Cuantos más términos se suman, mejor es la aproximación, pero siempre queda un resto sin calcular. El residuo de Lagrange da una cota: el error máximo que se puede llegar a cometer al cortar la serie en un grado determinado.</p>
-        <div class="formula-box"><span class="fx-label">Polinomio de grado 1 (P1)</span>P1(x) = 1 + x</div>
-        <div class="formula-box"><span class="fx-label">Polinomio de grado 2 (P2)</span>P2(x) = 1 + x + x²/2</div>
-        <div class="formula-box"><span class="fx-label">Error absoluto de cada aproximación</span>E_a = | e^x − P_n(x) |</div>
-        <div class="formula-box"><span class="fx-label">Error relativo</span>E_r = E_a / e^x</div>
-        <div class="formula-box"><span class="fx-label">Residuo de Lagrange para P2 (cota de error)</span>R2(x) = (e^x / 3!) · x³</div>
-      </div>
-
       <div style="grid-column:1/-1;">
         <p class="panel-title">Punto de evaluación</p>
         <div class="field">
@@ -534,18 +441,6 @@
     <p class="desc">De T = 2π√(L/g) despejamos g, propagamos la incertidumbre de L y T, y linealizamos g(T) con Taylor alrededor de un centro a.</p>
 
     <div class="grid">
-      <div class="theory">
-        <h3>Cómo se calcula</h3>
-        <p>Este ejercicio combina todo lo anterior. Partimos del período de un péndulo simple, T = 2π√(L/g), y despejamos g en función de L y T para obtener un valor "experimental". Como L y T se miden con incertidumbre, esa incertidumbre se propaga a g usando las derivadas parciales de g respecto a cada variable — el mismo principio del Ejercicio 1, pero ahora con dos variables en juego. Por último, se linealiza g como función de T con un polinomio de Taylor de grado 1 alrededor de un centro a, para estimar g sin recalcular la fórmula completa.</p>
-        <div class="formula-box"><span class="fx-label">Período del péndulo (fórmula original)</span>T = 2π · √(L / g)</div>
-        <div class="formula-box"><span class="fx-label">g despejada (g experimental)</span>g = 4π²L / T²</div>
-        <div class="formula-box"><span class="fx-label">Error absoluto y relativo de g</span>E_a = |g_real − g_exp|  ·  E_r = E_a / g_real</div>
-        <div class="formula-box"><span class="fx-label">Derivada parcial respecto a L</span>∂g/∂L = 4π² / T²</div>
-        <div class="formula-box"><span class="fx-label">Derivada parcial respecto a T</span>∂g/∂T = −8π²L / T³</div>
-        <div class="formula-box"><span class="fx-label">Incertidumbre total propagada (suma de errores parciales)</span>Δg = |∂g/∂L|·ΔL + |∂g/∂T|·ΔT</div>
-        <div class="formula-box"><span class="fx-label">Taylor de grado 1 de g(T), centrado en a</span>g(T) ≈ g(a) + g'(a) · (T − a)</div>
-      </div>
-
       <div>
         <p class="panel-title">Mediciones del péndulo</p>
         <div class="field">
