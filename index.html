@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio Integrador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c231f;
+    --paper:#f4efe1;
+    --paper-line:#d9cfb4;
+    --bg:#10231e;
+    --bg-soft:#173a30;
+    --copper:#c07a35;
+    --copper-dark:#8f5622;
+    --teal:#1f7a6c;
+    --teal-dark:#125349;
+    --rust:#a63d34;
+    --gold:#d7b56d;
+    --shadow: 0 18px 40px -20px rgba(0,0,0,0.55);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, rgba(215,181,109,0.08), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(31,122,108,0.12), transparent 45%),
+      var(--bg);
+    color:var(--paper);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    padding:0 0 80px 0;
+  }
+
+  /* ---------- Masthead ---------- */
+  header.masthead{
+    padding:56px 24px 36px;
+    text-align:center;
+    border-bottom:1px solid rgba(244,239,225,0.15);
+    position:relative;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    font-size:11.5px;
+    color:var(--gold);
+    margin-bottom:14px;
+  }
+  h1.title{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(2rem, 5vw, 3.4rem);
+    margin:0 0 10px;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    color:rgba(244,239,225,0.7);
+    font-size:1.05rem;
+    max-width:560px;
+    margin:0 auto;
+  }
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex;
+    justify-content:center;
+    gap:2px;
+    margin:36px auto 0;
+    max-width:760px;
+    padding:0 20px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    letter-spacing:0.03em;
+    background:transparent;
+    border:1px solid rgba(244,239,225,0.25);
+    color:rgba(244,239,225,0.75);
+    padding:12px 18px;
+    cursor:pointer;
+    transition:all .2s ease;
+    border-radius:2px;
+  }
+  .tab-btn .n{color:var(--gold); margin-right:8px;}
+  .tab-btn:hover{border-color:var(--gold); color:var(--paper);}
+  .tab-btn.active{
+    background:var(--gold);
+    color:var(--bg);
+    border-color:var(--gold);
+    font-weight:600;
+  }
+  .tab-btn.active .n{color:var(--bg);}
+
+  /* ---------- Worksheet card ---------- */
+  main{
+    max-width:920px;
+    margin:44px auto 0;
+    padding:0 20px;
+  }
+  .sheet{
+    display:none;
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0/100% 34px,
+      var(--paper);
+    color:var(--ink);
+    border-radius:6px;
+    box-shadow:var(--shadow);
+    padding:40px 44px 44px;
+    position:relative;
+    animation:fadeIn .35s ease;
+  }
+  .sheet::before{
+    content:"";
+    position:absolute; left:64px; top:0; bottom:0;
+    width:1px; background:rgba(166,61,52,0.35);
+  }
+  .sheet.active{display:block;}
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+  .sheet h2{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:1.6rem;
+    margin:0 0 4px;
+    padding-left:28px;
+  }
+  .sheet .desc{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    color:#5c5445;
+    margin:0 0 30px;
+    padding-left:28px;
+    font-size:0.98rem;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+    padding-left:28px;
+  }
+  @media(max-width:640px){ .grid{grid-template-columns:1fr;} }
+
+  .panel-title{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--copper-dark);
+    margin:0 0 14px;
+    border-bottom:1px solid var(--paper-line);
+    padding-bottom:8px;
+  }
+  .panel-title.calc{color:var(--teal-dark);}
+
+  .field{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .field label{
+    font-size:0.92rem;
+    color:#3a352b;
+  }
+  .field .unit{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    color:#8a8168;
+    margin-left:6px;
+  }
+  .field input[type=number]{
+    width:118px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.95rem;
+    padding:7px 9px;
+    background:#fff;
+    border:none;
+    border-bottom:2px solid var(--copper);
+    color:var(--copper-dark);
+    font-weight:600;
+    border-radius:2px 2px 0 0;
+    outline:none;
+    transition:border-color .15s, background .15s;
+  }
+  .field input[type=number]:focus{
+    background:#fffaf0;
+    border-bottom-color:var(--rust);
+  }
+
+  .result{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:10px;
+    padding:9px 12px;
+    margin-bottom:10px;
+    background:rgba(31,122,108,0.08);
+    border-left:3px solid var(--teal);
+    border-radius:0 3px 3px 0;
+  }
+  .result .rlabel{
+    font-size:0.86rem;
+    color:#3a352b;
+  }
+  .result .rformula{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    color:#8a8168;
+    margin-top:2px;
+  }
+  .result .rval{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    color:var(--teal-dark);
+    font-size:1rem;
+    white-space:nowrap;
+  }
+  .result.highlight{
+    background:rgba(166,61,52,0.08);
+    border-left-color:var(--rust);
+  }
+  .result.highlight .rval{color:var(--rust);}
+
+  .note{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:#8a8168;
+    padding-left:28px;
+    margin-top:28px;
+    line-height:1.6;
+  }
+
+  /* ---------- Pendulum signature element ---------- */
+  .pendulum-wrap{
+    grid-column:1 / -1;
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    gap:40px;
+    padding:20px 0 6px;
+    flex-wrap:wrap;
+  }
+  .pendulum-box{
+    width:180px;
+    height:190px;
+    position:relative;
+    background:linear-gradient(180deg,#fffef9,#f4efe1);
+    border:1px solid var(--paper-line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .pivot{
+    position:absolute; top:14px; left:50%;
+    width:10px; height:10px; margin-left:-5px;
+    background:var(--copper-dark); border-radius:50%;
+    z-index:3;
+  }
+  .rod-pivot{
+    position:absolute; top:19px; left:50%;
+    width:2px; height:120px;
+    transform-origin:top center;
+    animation:swing linear infinite;
+    z-index:2;
+  }
+  .rod{
+    width:2px; height:100%;
+    background:var(--copper);
+  }
+  .bob{
+    position:absolute; bottom:-9px; left:50%;
+    width:18px; height:18px; margin-left:-9px;
+    background:var(--rust);
+    border-radius:50%;
+    box-shadow:0 3px 6px rgba(0,0,0,0.25);
+  }
+  @keyframes swing{
+    0%{transform:rotate(-24deg);}
+    50%{transform:rotate(24deg);}
+    100%{transform:rotate(-24deg);}
+  }
+  .pendulum-caption{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    color:#8a8168;
+    text-align:center;
+    margin-top:10px;
+  }
+
+  ::selection{ background:var(--gold); color:var(--bg); }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">Desafío Integrador — Métodos Numéricos</div>
+  <h1 class="title">Cuaderno de Cálculo</h1>
+  <p class="subtitle">Tres ejercicios, tres mediciones, un mismo cuidado por el error. Cambiá los valores y mirá cómo se propaga cada cifra.</p>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-target="s1"><span class="n">01</span>Error y Propagación</button>
+  <button class="tab-btn" data-target="s2"><span class="n">02</span>Taylor y Lagrange</button>
+  <button class="tab-btn" data-target="s3"><span class="n">03</span>Péndulo — Síntesis</button>
+</nav>
+
+<main>
+
+  <!-- ================= EJERCICIO 1 ================= -->
+  <section class="sheet active" id="s1">
+    <h2>Error y Propagación</h2>
+    <p class="desc">Un lado de un cuadrado se mide con instrumento; lo comparamos contra el valor de referencia y propagamos el error hacia el área, A = x².</p>
+
+    <div class="grid">
+      <div>
+        <p class="panel-title">Mediciones</p>
+        <div class="field">
+          <label for="e1-xa">Lado medido, x<sub>a</sub></label>
+          <span><input type="number" id="e1-xa" value="12.4" step="0.1"><span class="unit">cm</span></span>
+        </div>
+        <div class="field">
+          <label for="e1-xv">Lado de referencia, x<sub>v</sub></label>
+          <span><input type="number" id="e1-xv" value="12.5" step="0.1"><span class="unit">cm</span></span>
+        </div>
+      </div>
+
+      <div>
+        <p class="panel-title calc">Error de medición</p>
+        <div class="result">
+          <span class="rlabel">Error absoluto, E<sub>a</sub><span class="rformula">|x_v − x_a|</span></span>
+          <span class="rval" id="e1-ea">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error relativo<span class="rformula">E_a / x_v</span></span>
+          <span class="rval" id="e1-er">–</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="panel-title calc">Propagación al área — A = x²</p>
+        <div class="result">
+          <span class="rlabel">dA/dx evaluada en x<sub>v</sub><span class="rformula">2·x_v</span></span>
+          <span class="rval" id="e1-deriv">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Área real, A<sub>real</sub><span class="rformula">x_v²</span></span>
+          <span class="rval" id="e1-area">–</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="panel-title calc">&nbsp;</p>
+        <div class="result highlight">
+          <span class="rlabel">Error propagado, ΔA<span class="rformula">|dA/dx| · E_a</span></span>
+          <span class="rval" id="e1-deltaA">–</span>
+        </div>
+        <div class="result highlight">
+          <span class="rlabel">Error relativo del área<span class="rformula">ΔA / A_real</span></span>
+          <span class="rval" id="e1-erArea">–</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">Instrumento: A = x². La incertidumbre de la regla se estira o encoge según cuán sensible es la fórmula — eso es exactamente lo que mide la derivada.</p>
+  </section>
+
+  <!-- ================= EJERCICIO 2 ================= -->
+  <section class="sheet" id="s2">
+    <h2>Taylor y Lagrange</h2>
+    <p class="desc">Aproximamos e˟ con polinomios de Taylor de grado 1 y 2 alrededor de 0, y acotamos el error con el residuo de Lagrange.</p>
+
+    <div class="grid">
+      <div style="grid-column:1/-1;">
+        <p class="panel-title">Punto de evaluación</p>
+        <div class="field">
+          <label for="e2-x">x</label>
+          <span><input type="number" id="e2-x" value="0.3" step="0.05"></span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Valor real<span class="rformula">e^x</span></span>
+          <span class="rval" id="e2-real">–</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="panel-title calc">P₁ — Grado 1</p>
+        <div class="result">
+          <span class="rlabel">Aproximación<span class="rformula">1 + x</span></span>
+          <span class="rval" id="e2-p1">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error absoluto<span class="rformula">|e^x − P1|</span></span>
+          <span class="rval" id="e2-ea1">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error relativo<span class="rformula">Ea / e^x</span></span>
+          <span class="rval" id="e2-er1">–</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="panel-title calc">P₂ — Grado 2</p>
+        <div class="result">
+          <span class="rlabel">Aproximación<span class="rformula">1 + x + x²/2</span></span>
+          <span class="rval" id="e2-p2">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error absoluto<span class="rformula">|e^x − P2|</span></span>
+          <span class="rval" id="e2-ea2">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error relativo<span class="rformula">Ea / e^x</span></span>
+          <span class="rval" id="e2-er2">–</span>
+        </div>
+      </div>
+
+      <div style="grid-column:1/-1;">
+        <p class="panel-title calc">Cota de error — Residuo de Lagrange, R₂</p>
+        <div class="result highlight">
+          <span class="rlabel">Cota máxima del residuo P₂<span class="rformula">(e^x / 3!) · x³</span></span>
+          <span class="rval" id="e2-r2">–</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">Cuanto más alto el grado del polinomio, más rápido cae el error — mirá cómo Ea de P2 se hunde frente al de P1 al mover x.</p>
+  </section>
+
+  <!-- ================= EJERCICIO 3 ================= -->
+  <section class="sheet" id="s3">
+    <h2>Péndulo — Síntesis</h2>
+    <p class="desc">De T = 2π√(L/g) despejamos g, propagamos la incertidumbre de L y T, y linealizamos g(T) con Taylor alrededor de un centro a.</p>
+
+    <div class="grid">
+      <div>
+        <p class="panel-title">Mediciones del péndulo</p>
+        <div class="field">
+          <label for="e3-L">Longitud, L</label>
+          <span><input type="number" id="e3-L" value="1" step="0.01"><span class="unit">m</span></span>
+        </div>
+        <div class="field">
+          <label for="e3-dL">Incertidumbre, ΔL</label>
+          <span><input type="number" id="e3-dL" value="0.002" step="0.001"><span class="unit">m</span></span>
+        </div>
+        <div class="field">
+          <label for="e3-T">Período, T</label>
+          <span><input type="number" id="e3-T" value="2.006" step="0.001"><span class="unit">s</span></span>
+        </div>
+        <div class="field">
+          <label for="e3-dT">Incertidumbre, ΔT</label>
+          <span><input type="number" id="e3-dT" value="0.004" step="0.001"><span class="unit">s</span></span>
+        </div>
+        <div class="field">
+          <label for="e3-greal">g de referencia</label>
+          <span><input type="number" id="e3-greal" value="9.8" step="0.01"><span class="unit">m/s²</span></span>
+        </div>
+      </div>
+
+      <div class="pendulum-wrap" style="grid-column:auto; padding-top:0;">
+        <div>
+          <div class="pendulum-box">
+            <div class="pivot"></div>
+            <div class="rod-pivot" id="rodPivot"><div class="rod"><div class="bob"></div></div></div>
+          </div>
+          <p class="pendulum-caption">oscila con el período T que ingresaste</p>
+        </div>
+      </div>
+
+      <div>
+        <p class="panel-title calc">g experimental — T = 2π√(L/g)</p>
+        <div class="result">
+          <span class="rlabel">g<sub>experimental</sub><span class="rformula">4π²L / T²</span></span>
+          <span class="rval" id="e3-gexp">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error absoluto<span class="rformula">|g_real − g_exp|</span></span>
+          <span class="rval" id="e3-ea">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error relativo<span class="rformula">Ea / g_real</span></span>
+          <span class="rval" id="e3-er">–</span>
+        </div>
+      </div>
+
+      <div>
+        <p class="panel-title calc">Propagación de error</p>
+        <div class="result">
+          <span class="rlabel">∂g/∂L<span class="rformula">4π² / T²</span></span>
+          <span class="rval" id="e3-dgdL">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">∂g/∂T<span class="rformula">−8π²L / T³</span></span>
+          <span class="rval" id="e3-dgdT">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error parcial por L<span class="rformula">|∂g/∂L| · ΔL</span></span>
+          <span class="rval" id="e3-errL">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">Error parcial por T<span class="rformula">|∂g/∂T| · ΔT</span></span>
+          <span class="rval" id="e3-errT">–</span>
+        </div>
+        <div class="result highlight">
+          <span class="rlabel">Incertidumbre total, Δg<span class="rformula">Err_L + Err_T</span></span>
+          <span class="rval" id="e3-dg">–</span>
+        </div>
+      </div>
+
+      <div style="grid-column:1/-1;">
+        <p class="panel-title calc">Linealización con Taylor de g(T), centrada en a</p>
+        <div class="field">
+          <label for="e3-a">Centro de Taylor, a</label>
+          <span><input type="number" id="e3-a" value="2" step="0.01"><span class="unit">s</span></span>
+        </div>
+        <div class="result">
+          <span class="rlabel">g(a)<span class="rformula">4π²L / a²</span></span>
+          <span class="rval" id="e3-ga">–</span>
+        </div>
+        <div class="result">
+          <span class="rlabel">g'(a)<span class="rformula">−8π²L / a³</span></span>
+          <span class="rval" id="e3-gpa">–</span>
+        </div>
+        <div class="result highlight">
+          <span class="rlabel">Estimación lineal de g(T)<span class="rformula">g(a) + g'(a)·(T − a)</span></span>
+          <span class="rval" id="e3-gest">–</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">El centro a por defecto es 2 s — movelo lejos de T y vas a ver la estimación lineal separarse del valor experimental real.</p>
+  </section>
+
+</main>
+
+<script>
+  // ---------- Tabs ----------
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.target).classList.add('active');
+    });
+  });
+
+  const $ = id => document.getElementById(id);
+  const fmt = (n, d=4) => Number.isFinite(n) ? n.toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:d}) : '–';
+  const pct = (n, d=3) => Number.isFinite(n) ? (n*100).toLocaleString('es-AR',{minimumFractionDigits:0,maximumFractionDigits:d}) + ' %' : '–';
+
+  // ---------- Ejercicio 1 ----------
+  function calc1(){
+    const xa = parseFloat($('e1-xa').value);
+    const xv = parseFloat($('e1-xv').value);
+    const Ea = Math.abs(xv - xa);
+    const Er = Ea / xv;
+    const deriv = 2 * xv;
+    const area = xv ** 2;
+    const deltaA = Math.abs(deriv) * Ea;
+    const erArea = deltaA / area;
+
+    $('e1-ea').textContent = fmt(Ea) + ' cm';
+    $('e1-er').textContent = pct(Er);
+    $('e1-deriv').textContent = fmt(deriv);
+    $('e1-area').textContent = fmt(area) + ' cm²';
+    $('e1-deltaA').textContent = fmt(deltaA) + ' cm²';
+    $('e1-erArea').textContent = pct(erArea);
+  }
+
+  // ---------- Ejercicio 2 ----------
+  function calc2(){
+    const x = parseFloat($('e2-x').value);
+    const real = Math.exp(x);
+    const p1 = 1 + x;
+    const ea1 = Math.abs(real - p1);
+    const er1 = ea1 / real;
+    const p2 = 1 + x + (x**2)/2;
+    const ea2 = Math.abs(real - p2);
+    const er2 = ea2 / real;
+    const r2 = (Math.exp(x)/6) * (x**3);
+
+    $('e2-real').textContent = fmt(real, 6);
+    $('e2-p1').textContent = fmt(p1, 6);
+    $('e2-ea1').textContent = fmt(ea1, 6);
+    $('e2-er1').textContent = pct(er1);
+    $('e2-p2').textContent = fmt(p2, 6);
+    $('e2-ea2').textContent = fmt(ea2, 6);
+    $('e2-er2').textContent = pct(er2);
+    $('e2-r2').textContent = fmt(r2, 6);
+  }
+
+  // ---------- Ejercicio 3 ----------
+  function calc3(){
+    const L = parseFloat($('e3-L').value);
+    const dL = parseFloat($('e3-dL').value);
+    const T = parseFloat($('e3-T').value);
+    const dT = parseFloat($('e3-dT').value);
+    const gReal = parseFloat($('e3-greal').value);
+    const a = parseFloat($('e3-a').value);
+    const PI = Math.PI;
+
+    const gExp = (4 * PI**2 * L) / (T**2);
+    const Ea = Math.abs(gReal - gExp);
+    const Er = Ea / gReal;
+
+    const dgdL = (4 * PI**2) / (T**2);
+    const dgdT = (-8 * PI**2 * L) / (T**3);
+    const errL = Math.abs(dgdL) * dL;
+    const errT = Math.abs(dgdT) * dT;
+    const dg = errL + errT;
+
+    const ga = (4 * PI**2 * L) / (a**2);
+    const gpa = (-8 * PI**2 * L) / (a**3);
+    const gest = ga + gpa * (T - a);
+
+    $('e3-gexp').textContent = fmt(gExp, 6) + ' m/s²';
+    $('e3-ea').textContent = fmt(Ea, 6);
+    $('e3-er').textContent = pct(Er);
+    $('e3-dgdL').textContent = fmt(dgdL, 6);
+    $('e3-dgdT').textContent = fmt(dgdT, 6);
+    $('e3-errL').textContent = fmt(errL, 6);
+    $('e3-errT').textContent = fmt(errT, 6);
+    $('e3-dg').textContent = '± ' + fmt(dg, 6) + ' m/s²';
+    $('e3-ga').textContent = fmt(ga, 6);
+    $('e3-gpa').textContent = fmt(gpa, 6);
+    $('e3-gest').textContent = fmt(gest, 6) + ' m/s²';
+
+    // signature: animate pendulum swing duration to match T (clamped for usability)
+    const dur = Math.min(Math.max(T, 0.4), 6);
+    $('rodPivot').style.animationDuration = dur + 's';
+  }
+
+  document.querySelectorAll('#s1 input').forEach(i=>i.addEventListener('input', calc1));
+  document.querySelectorAll('#s2 input').forEach(i=>i.addEventListener('input', calc2));
+  document.querySelectorAll('#s3 input').forEach(i=>i.addEventListener('input', calc3));
+
+  calc1(); calc2(); calc3();
+</script>
+
+</body>
+</html>
